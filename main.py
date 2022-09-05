@@ -2,14 +2,17 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/")
-def index():
-  return {"data": {"name":"yeonsang"}}
+@app.get("/blog") # /blog?limit=10&published=true
+def index(limit, published):
+  if published:
+    return {"data": f"{limit} published"}
+  else:
+    return {"data": f"{limit} can not published"}
 
 @app.get("/blog/unpublished")
 def unpublished():
   return {"data": "all unpublished blogs"}
-  
+
 @app.get("/blog/{id}")
 def show(id: int):
   return {"data": id}
