@@ -3,7 +3,7 @@ from fastapi import FastAPI
 app = FastAPI()
 
 @app.get("/blog") # /blog?limit=10&published=true
-def index(limit, published):
+def index(limit=10, published:bool = True):
   if published:
     return {"data": f"{limit} published"}
   else:
