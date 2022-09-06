@@ -1,5 +1,4 @@
-from urllib import response
-from fastapi import FastAPI, Depends, status, Response
+from fastapi import FastAPI, Depends, status, Response, HTTPException
 from . import schemas, models
 from .database import SessionLocal, engine
 from sqlalchemy.orm import Session
@@ -38,6 +37,8 @@ def all_blog(db: Session = Depends(get_db)):
 def single_blog(id, response: Response, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return {'details': f'incorrect id {id}'}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'incorrect id {id}')
+        # response.status_code = status.HTTP_404_NOT_FOUND
+        # return {'details': f'incorrect id {id}'}
     return blog
