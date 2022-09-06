@@ -72,7 +72,7 @@ def single_blog(id, response: Response, db: Session = Depends(get_db)):
     return blog
 
 
-@app.post('/user')
+@app.post('/user', response_model=schemas.ShowUser)
 def create_user(request: schemas.User, db: Session = Depends(get_db)):
     new_user = models.User(
         name=request.name,
@@ -84,4 +84,3 @@ def create_user(request: schemas.User, db: Session = Depends(get_db)):
     db.refresh(new_user)
 
     return new_user
-
