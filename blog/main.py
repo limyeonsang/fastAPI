@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, status, Response, HTTPException
 from . import schemas, models
 from .database import SessionLocal, engine
 from sqlalchemy.orm import Session
+from typing import List
 
 app = FastAPI()
 
@@ -52,14 +53,14 @@ def update(id, request: schemas.Blog, db: Session = Depends(get_db)):
     return 'update success'
 
 
-@app.get('/blog')
+@app.get('/blog', response_model=List[schemas.ShowBlog])
 def all_blog(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
 
     return blogs
 
 
-@app.get('/blog/{id}', status_code=status.HTTP_200_OK)
+@app.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def single_blog(id, response: Response, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
@@ -68,3 +69,4 @@ def single_blog(id, response: Response, db: Session = Depends(get_db)):
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {'details': f'incorrect id {id}'}
     return blog
+
