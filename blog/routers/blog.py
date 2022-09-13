@@ -1,6 +1,6 @@
 from typing import List
-from fastapi import APIRouter, Depends, status, HTTPException
-from .. import schemas, database, models
+from fastapi import APIRouter, Depends, status
+from .. import schemas, database
 from sqlalchemy.orm import Session
 from ..repository import blog
 
