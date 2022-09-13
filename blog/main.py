@@ -1,26 +1,20 @@
 from fastapi import FastAPI, Depends, status, Response, HTTPException
 from . import schemas, models
-from .database import SessionLocal, engine
+from .database import get_db, engine
 from sqlalchemy.orm import Session
-from typing import List
 from .hashing import Hash
+from .routers import blog
 
 app = FastAPI()
 
 models.Base.metadata.create_all(engine)
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.include_router(blog.router)
 
 
 @app.post('/blog', status_code=status.HTTP_201_CREATED, tags=['blogs'])
 def create(request: schemas.Blog, db: Session = Depends(get_db)):
-    new_blog = models.Blog(title=request.title, body=request.body)
+    new_blog = models.Blog(title=request.title, body=request.body, user_id=1)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
@@ -52,13 +46,6 @@ def update(id, request: schemas.Blog, db: Session = Depends(get_db)):
     blog.update(request.dict())
     db.commit()
     return 'update success'
-
-
-@app.get('/blog', response_model=List[schemas.ShowBlog], tags=['blogs'])
-def all_blog(db: Session = Depends(get_db)):
-    blogs = db.query(models.Blog).all()
-
-    return blogs
 
 
 @app.get('/blog/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog, tags=['blogs'])
