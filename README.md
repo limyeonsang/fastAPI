@@ -1,2 +1,2 @@
 # fastAPI
-fast api practice
+fast api practice with documentation
